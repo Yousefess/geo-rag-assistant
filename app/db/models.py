@@ -5,7 +5,7 @@ from pgvector.sqlalchemy import Vector
 
 from app.db.session import Base
 
-EMBEDDING_DIM = 1536  # based on the embedding model we'll choose later
+EMBEDDING_DIM = 2048  # nvidia/llama-nemotron-embed-vl-1b-v2:free output dimension
 
 
 class Document(Base):
