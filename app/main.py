@@ -1,10 +1,11 @@
 from fastapi import FastAPI
 
-from app.api import boroughs
+from app.api import boroughs, chat
 
 app = FastAPI(title="GeoRAG Assistant API")
 
 app.include_router(boroughs.router)
+app.include_router(chat.router)
 
 
 @app.get("/")
