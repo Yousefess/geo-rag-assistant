@@ -27,3 +27,23 @@ def get_borough(name: str, db: Session = Depends(get_db)):
         "population": borough.population,
         "geometry": shape.__geo_interface__,
     }
+
+
+@router.get("/geojson/all")
+def get_boroughs_geojson(db: Session = Depends(get_db)):
+    boroughs = db.query(Borough).all()
+    features = []
+    for b in boroughs:
+        shape = to_shape(b.geom)
+        features.append(
+            {
+                "type": "Feature",
+                "geometry": shape.__geo_interface__,
+                "properties": {
+                    "id": b.id,
+                    "name": b.name,
+                    "population": b.population,
+                },
+            }
+        )
+    return {"type": "FeatureCollection", "features": features}
