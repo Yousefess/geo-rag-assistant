@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import ReactMarkdown from "react-markdown";
 import { API_BASE_URL } from "./config";
 
 function ChatPanel({ onBoroughMatch }) {
@@ -21,9 +22,12 @@ function ChatPanel({ onBoroughMatch }) {
         question: userMessage.content,
       });
 
-      const { answer, matched_borough } = response.data;
+      const { answer, matched_borough, sources } = response.data;
 
-      setMessages((prev) => [...prev, { role: "assistant", content: answer }]);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: answer, sources },
+      ]);
       onBoroughMatch(matched_borough ? matched_borough.name : null);
     } catch (error) {
       setMessages((prev) => [
@@ -43,7 +47,18 @@ function ChatPanel({ onBoroughMatch }) {
             key={i}
             style={msg.role === "user" ? styles.userMsg : styles.assistantMsg}
           >
-            {msg.content}
+            {msg.role === "assistant" ? (
+              <div className="chat-markdown">
+                <ReactMarkdown>{msg.content}</ReactMarkdown>
+              </div>
+            ) : (
+              msg.content
+            )}
+            {msg.sources && (
+              <div style={styles.sources}>
+                Sources: {msg.sources.join(", ")}
+              </div>
+            )}
           </div>
         ))}
         {loading && <div style={styles.assistantMsg}>Thinking...</div>}
@@ -69,54 +84,64 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     height: "100%",
-    width: "360px",
-    borderLeft: "1px solid #ddd",
-    background: "white",
+    width: "380px",
+    borderLeft: "1px solid var(--border)",
+    background: "var(--bg-panel)",
+    borderRadius: "16px",
+    boxShadow: "var(--shadow)",
+    overflow: "hidden",
   },
   messages: {
     flex: 1,
     overflowY: "auto",
-    padding: "12px",
+    padding: "16px",
     display: "flex",
     flexDirection: "column",
-    gap: "8px",
+    gap: "10px",
   },
   userMsg: {
     alignSelf: "flex-end",
-    background: "#2563eb",
+    background: "var(--accent-strong)",
     color: "white",
-    padding: "8px 12px",
-    borderRadius: "12px",
-    maxWidth: "80%",
+    padding: "10px 14px",
+    borderRadius: "14px",
+    maxWidth: "85%",
   },
   assistantMsg: {
     alignSelf: "flex-start",
-    background: "#f1f1f1",
-    color: "#111",
-    padding: "8px 12px",
-    borderRadius: "12px",
-    maxWidth: "80%",
-    whiteSpace: "pre-wrap",
+    background: "var(--border)",
+    color: "var(--text)",
+    padding: "10px 14px",
+    borderRadius: "14px",
+    maxWidth: "90%",
+  },
+  sources: {
+    fontSize: "11px",
+    color: "var(--text-muted)",
+    marginTop: "6px",
   },
   form: {
     display: "flex",
     gap: "8px",
-    padding: "12px",
-    borderTop: "1px solid #ddd",
+    padding: "14px",
+    borderTop: "1px solid var(--border)",
   },
   input: {
     flex: 1,
-    padding: "8px",
-    border: "1px solid #ccc",
-    borderRadius: "6px",
+    padding: "10px 12px",
+    border: "1px solid var(--border)",
+    borderRadius: "8px",
+    background: "var(--bg-input)",
+    color: "var(--text)",
   },
   button: {
-    padding: "8px 16px",
-    background: "#2563eb",
+    padding: "10px 18px",
+    background: "var(--accent-strong)",
     color: "white",
     border: "none",
-    borderRadius: "6px",
+    borderRadius: "8px",
     cursor: "pointer",
+    fontWeight: 600,
   },
 };
 
