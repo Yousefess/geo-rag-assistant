@@ -1,11 +1,12 @@
+requests
 fastapi
 uvicorn[standard]
 sqlalchemy
 geoalchemy2
 psycopg2-binary
 pydantic-settings
-pgvectoralembic
+pgvector
+alembic
+pandas
 geopandas
 pypdf
-pypdf
-fonttools

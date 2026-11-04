@@ -9,8 +9,6 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-georag}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-georag}
       POSTGRES_DB: ${POSTGRES_DB:-georag}
-    ports:
-      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./db-init:/docker-entrypoint-initdb.d
@@ -19,6 +17,35 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: georag_api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-georag}:${POSTGRES_PASSWORD:-georag}@db:5432/${POSTGRES_DB:-georag}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
+      MAX_PDF_PAGES: 0
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+      args:
+        VITE_API_BASE_URL: http://localhost:8000
+    container_name: georag_frontend
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "5173:80"
 
 volumes:
   pgdata:
