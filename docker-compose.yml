@@ -9,6 +9,8 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-georag}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-georag}
       POSTGRES_DB: ${POSTGRES_DB:-georag}
+    ports:
+      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./db-init:/docker-entrypoint-initdb.d

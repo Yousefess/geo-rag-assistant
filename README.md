@@ -61,6 +61,51 @@ npm install
 npm run dev
 ```
 
+## Quick start with the included database seed
+
+## Quick start with the included database seed
+
+Instead of re-running ingestion from scratch, which involves downloading large source files and making hundreds of embedding API calls, you can load a ready-made snapshot of the database.
+
+1. Copy `.env.example` to `.env` and fill in `OPENROUTER_API_KEY`.
+2. Start only the database first:
+
+   `docker compose up -d db`
+
+3. Run migrations:
+
+   `alembic upgrade head`
+
+4. Restore the seed:
+
+   `docker exec -i georag_db pg_restore -U georag -d georag --clean --if-exists < db-seed/georag_seed.dump`
+
+5. Now start the rest of the stack:
+
+   `docker compose up -d --build`
+
+The frontend is at `http://localhost:5173`, the API at `http://localhost:8000`.
+
+To reproduce the data from the original sources instead, see "Data setup" below.
+
+Instead of re-running ingestion from scratch, which involves downloading large source files and making hundreds of embedding API calls, you can load a ready-made snapshot of the database.
+
+1. Start the database:
+
+   `docker compose up -d db`
+
+2. Run migrations:
+
+   `alembic upgrade head`
+
+3. Restore the seed:
+
+   `docker exec -i georag_db pg_restore -U georag -d georag --clean --if-exists < db-seed/georag_seed.dump`
+
+This loads all 33 boroughs and the full 381 embedded chunks of The London Plan 2021, so the API and frontend work immediately.
+
+To reproduce the data from the original sources instead, see "Data setup" below.
+
 ## Data setup
 
 Raw data files are not committed to this repo (they are large and publicly downloadable). To reproduce the dataset locally:
@@ -118,5 +163,6 @@ frontend/
   src/           React components
 scripts/         one-off data ingestion scripts
 data/raw/        downloaded source data (gitignored)
+db-seed/         ready-made database dump (committed, see "Quick start" above)
 docs/            architecture notes
 ```
