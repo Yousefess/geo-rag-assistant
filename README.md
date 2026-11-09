@@ -63,8 +63,6 @@ npm run dev
 
 ## Quick start with the included database seed
 
-## Quick start with the included database seed
-
 Instead of re-running ingestion from scratch, which involves downloading large source files and making hundreds of embedding API calls, you can load a ready-made snapshot of the database.
 
 1. Copy `.env.example` to `.env` and fill in `OPENROUTER_API_KEY`.
